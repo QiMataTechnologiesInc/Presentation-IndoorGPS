@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -16,7 +15,6 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="100"></RowDefinition>
         </Grid.RowDefinitions>
-        
         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="0" Grid.Row="1" Padding="0,0,10,0" Text="Suggested Item: "></TextBlock>
         <Image Grid.Row="1" Grid.Column="1" x:Name="SuggestedItem"></Image>
     </Grid>
