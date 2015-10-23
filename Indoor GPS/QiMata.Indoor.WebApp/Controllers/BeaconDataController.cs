@@ -17,7 +17,7 @@ namespace QiMata.Indoor.WebApp.Controllers
         public async Task<IHttpActionResult> PostNewBeaconData(IEnumerable<BeaconDistance> beaconData)
         {
 
-            if (beaconData.Any(x => x.Uuid == _ibeaconClosest))
+            if (beaconData.Any(x => x.Beacon.Uuid == _ibeaconClosest))
             {
                 
             }
@@ -27,7 +27,8 @@ namespace QiMata.Indoor.WebApp.Controllers
 
         public async Task<IHttpActionResult> PutiBeaconClosest(Guid closedUuid)
         {
-            
+            _ibeaconClosest = closedUuid;
+            return Ok();
         }
     }
 }

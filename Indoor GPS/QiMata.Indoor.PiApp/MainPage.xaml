@@ -9,12 +9,18 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="300"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="100"></RowDefinition>
         </Grid.RowDefinitions>
+        <Canvas Grid.Row="0" Grid.Column="0" x:Name="Graph">
+        </Canvas>
+        <Rectangle Grid.Row="0" Grid.Column="0"  Fill="Black" StrokeThickness="20" Width="2" Grid.RowSpan="2" HorizontalAlignment="Right"></Rectangle>
+        <Rectangle Grid.Row="0"  Grid.Column="0" Fill="Black" StrokeThickness="20" Height="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom" ></Rectangle>
+        <StackPanel Grid.Row="0" Grid.Column="1">
+        </StackPanel>
         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="0" Grid.Row="1" Padding="0,0,10,0" Text="Suggested Item: "></TextBlock>
         <Image Grid.Row="1" Grid.Column="1" x:Name="SuggestedItem"></Image>
     </Grid>

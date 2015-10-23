@@ -11,14 +11,5 @@ namespace QiMata.Indoor.Common
         public List<InitialDistance> InitialDistances { get; set; }
 
         public Guid CashRegisterGuid { get; set; }
-
-
-        public class InitialDistance
-        {
-            public Guid Beacon1 { get; set; }
-            public Guid Beacon2 { get; set; }
-            
-            public int Distance { get; set; }
-        }
     }
 }
