@@ -9,36 +9,110 @@ namespace QiMata.Indoor.Common
     {
         public Beacon Beacon { get; set; }
 
-        public decimal Distance { get; set; }
+        public double Distance { get; set; }
 
-        public Nullable<Coordinate> GetItemLocaton(List<InitialDistance> distances,Dictionary<Beacon,double> previousDistances)
+        public Nullable<Coordinate> GetItemLocation(List<InitialDistance> distances,Dictionary<Beacon,double> previousDistances)
         {
             var thisBeacon = this;
 
             var beaconDistances = distances.Where(x => x.Beacon1 == thisBeacon.Beacon || x.Beacon2 == thisBeacon.Beacon);
 
+            if (previousDistances.Count != 4)
+            {
+                return null;
+            }
+
+            double xCoord = 0;
+            double yCoord= 0;
+
+            //if x coord
             if (thisBeacon.Beacon.Coordinate.X == 0)
             {
-                if (thisBeacon.Beacon.Coordinate.Y == 0)
-                {
+                var otherXPlane =
+                    beaconDistances.FirstOrDefault(
+                        x =>
+                            (x.Beacon1 == thisBeacon.Beacon && x.Beacon2.Coordinate.X == 1 &&
+                             x.Beacon2.Coordinate.Y == thisBeacon.Beacon.Coordinate.Y)
+                            ||
+                            (x.Beacon2 == thisBeacon.Beacon && x.Beacon1.Coordinate.X == 1 &&
+                             x.Beacon1.Coordinate.Y == thisBeacon.Beacon.Coordinate.Y));
 
-                }
-                else
+                if (otherXPlane != null)
                 {
-                    
+                    var beacon1IsThisBeacon = otherXPlane.Beacon1 == thisBeacon.Beacon;
+                    xCoord = GetPoint(otherXPlane.Distance, previousDistances[thisBeacon.Beacon],
+                        previousDistances[beacon1IsThisBeacon ? otherXPlane.Beacon1 : otherXPlane.Beacon2]);
                 }
-            }
-            else if (thisBeacon.Beacon.Coordinate.Y == 0)
-            {
-                
             }
             else
             {
-                
-            }
-            
+                var otherXPlane =
+                    beaconDistances.FirstOrDefault(
+                        x =>
+                            (x.Beacon1 == thisBeacon.Beacon && x.Beacon2.Coordinate.X == 0 &&
+                             x.Beacon2.Coordinate.Y == thisBeacon.Beacon.Coordinate.Y)
+                            ||
+                            (x.Beacon2 == thisBeacon.Beacon && x.Beacon1.Coordinate.X == 0 &&
+                             x.Beacon1.Coordinate.Y == thisBeacon.Beacon.Coordinate.Y));
 
-            return null;
+                if (otherXPlane != null)
+                {
+                    var beacon1IsThisBeacon = otherXPlane.Beacon1 == thisBeacon.Beacon;
+                    xCoord = GetPoint(otherXPlane.Distance,
+                        previousDistances[beacon1IsThisBeacon ? otherXPlane.Beacon1 : otherXPlane.Beacon2],
+                        previousDistances[thisBeacon.Beacon]);
+                }
+            }
+            if (thisBeacon.Beacon.Coordinate.Y == 0)
+            {
+                var otherYPlane =
+                    beaconDistances.FirstOrDefault(
+                        x =>
+                            (x.Beacon1 == thisBeacon.Beacon && x.Beacon2.Coordinate.Y == 1 &&
+                             x.Beacon2.Coordinate.X == thisBeacon.Beacon.Coordinate.X)
+                            ||
+                            (x.Beacon2 == thisBeacon.Beacon && x.Beacon1.Coordinate.Y == 1 &&
+                             x.Beacon1.Coordinate.X == thisBeacon.Beacon.Coordinate.X));
+
+                if (otherYPlane != null)
+                {
+                    var beacon1IsThisBeacon = otherYPlane.Beacon1 == thisBeacon.Beacon;
+                    yCoord = GetPoint(otherYPlane.Distance, previousDistances[thisBeacon.Beacon],
+                        previousDistances[beacon1IsThisBeacon ? otherYPlane.Beacon1 : otherYPlane.Beacon2]);
+                }
+            }
+            else
+            {
+                var otherYPlane =
+                    beaconDistances.FirstOrDefault(
+                        x =>
+                            (x.Beacon1 == thisBeacon.Beacon && x.Beacon2.Coordinate.Y == 0 &&
+                             x.Beacon2.Coordinate.X == thisBeacon.Beacon.Coordinate.X)
+                            ||
+                            (x.Beacon2 == thisBeacon.Beacon && x.Beacon1.Coordinate.Y == 0 &&
+                             x.Beacon1.Coordinate.X == thisBeacon.Beacon.Coordinate.X));
+
+                if (otherYPlane != null)
+                {
+                    var beacon1IsThisBeacon = otherYPlane.Beacon1 == thisBeacon.Beacon;
+                    yCoord = GetPoint(otherYPlane.Distance,
+                        previousDistances[beacon1IsThisBeacon ? otherYPlane.Beacon1 : otherYPlane.Beacon2],
+                        previousDistances[thisBeacon.Beacon]);
+                }
+            }
+
+            if (xCoord == 0 || yCoord == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return new Coordinate
+                {
+                    X = Convert.ToDecimal(xCoord),
+                    Y = Convert.ToDecimal(yCoord)
+                };
+            }
         }
 
         public double GetPoint(double becaonSeperation, double distanceBeacon1, double distanceBeacon2)

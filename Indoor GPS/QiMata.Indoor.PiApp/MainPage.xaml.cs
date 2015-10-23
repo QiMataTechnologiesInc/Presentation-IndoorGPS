@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using QiMata.Indoor.PiApp.WebClients;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -27,6 +28,7 @@ namespace QiMata.Indoor.PiApp
     public sealed partial class MainPage : Page
     {
         private Ellipse CenterEllipse;
+        private CoordinateHubClient _coordinateHubClient;
 
         public MainPage()
         {
@@ -88,6 +90,12 @@ namespace QiMata.Indoor.PiApp
             Canvas.SetLeft(CenterEllipse,endX / 2);
             Canvas.SetTop(CenterEllipse,endY / 2);
             this.Graph.Children.Add(CenterEllipse);
+
+            _coordinateHubClient = new CoordinateHubClient(x =>
+            {
+                Canvas.SetLeft(CenterEllipse, (Convert.ToDouble(x.Y) * endY));
+                Canvas.SetTop(CenterEllipse, (Convert.ToDouble(x.X) * endX));
+            });
         }
 
         private Line GetYLine(double startX, double endX, double yPos)

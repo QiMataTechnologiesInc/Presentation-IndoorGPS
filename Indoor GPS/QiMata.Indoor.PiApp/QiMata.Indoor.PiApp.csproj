@@ -103,6 +103,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebClients\CoordinateHubClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -131,7 +132,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="WebClients\" />
+    <ProjectReference Include="..\QiMata.Indoor.Common\QiMata.Indoor.Common.csproj">
+      <Project>{A43462EF-FD98-4201-B53A-4CF4CF4A690D}</Project>
+      <Name>QiMata.Indoor.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
