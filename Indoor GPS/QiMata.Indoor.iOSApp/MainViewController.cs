@@ -106,21 +106,27 @@ namespace QiMata.Indoor.iOSApp
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var response = await client.PutAsJsonAsync("api/BeaconData", new TriangulationRequired
+                var response = client.PutAsJsonAsync("api/BeaconData", new TriangulationRequired
                 {
                     InitialDistances = new List<InitialDistance>
                     {
                         new InitialDistance
                         {
-                            Beacon1 = 
+                            Beacon1 = Defaults.Beacons[0],
+                            Beacon2 = Defaults.Beacons[1],
+                            Distance = 8
                         },
                         new InitialDistance
                         {
-
+                            Beacon1 = Defaults.Beacons[2],
+                            Beacon2 = Defaults.Beacons[1],
+                            Distance = 8
                         },
                         new InitialDistance
                         {
-
+                            Beacon1 = Defaults.Beacons[0],
+                            Beacon2 = Defaults.Beacons[2],
+                            Distance = 8
                         },
                         //new InitialDistance
                         //{
