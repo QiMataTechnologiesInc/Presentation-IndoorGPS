@@ -26,8 +26,8 @@ namespace QiMata.Indoor.Common
             }
         }
 
-        public decimal X { get; set; }
+        public double X { get; set; }
 
-        public decimal Y { get; set; }
+        public double Y { get; set; }
     }
 }

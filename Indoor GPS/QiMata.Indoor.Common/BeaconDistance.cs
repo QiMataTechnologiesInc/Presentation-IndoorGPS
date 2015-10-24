@@ -17,7 +17,7 @@ namespace QiMata.Indoor.Common
 
             var beaconDistances = distances.Where(x => x.Beacon1 == thisBeacon.Beacon || x.Beacon2 == thisBeacon.Beacon);
 
-            if (previousDistances.Count != 4)
+            if (previousDistances.Count < 3)
             {
                 return null;
             }
@@ -41,7 +41,7 @@ namespace QiMata.Indoor.Common
                 {
                     var beacon1IsThisBeacon = otherXPlane.Beacon1 == thisBeacon.Beacon;
                     xCoord = GetPoint(otherXPlane.Distance, previousDistances[thisBeacon.Beacon],
-                        previousDistances[beacon1IsThisBeacon ? otherXPlane.Beacon1 : otherXPlane.Beacon2]);
+                        previousDistances[beacon1IsThisBeacon ? otherXPlane.Beacon2 : otherXPlane.Beacon1]);
                 }
             }
             else
@@ -58,8 +58,8 @@ namespace QiMata.Indoor.Common
                 if (otherXPlane != null)
                 {
                     var beacon1IsThisBeacon = otherXPlane.Beacon1 == thisBeacon.Beacon;
-                    xCoord = GetPoint(otherXPlane.Distance,
-                        previousDistances[beacon1IsThisBeacon ? otherXPlane.Beacon1 : otherXPlane.Beacon2],
+                    xCoord = otherXPlane.Distance - GetPoint(otherXPlane.Distance,
+                        previousDistances[beacon1IsThisBeacon ? otherXPlane.Beacon2 : otherXPlane.Beacon1],
                         previousDistances[thisBeacon.Beacon]);
                 }
             }
@@ -78,7 +78,7 @@ namespace QiMata.Indoor.Common
                 {
                     var beacon1IsThisBeacon = otherYPlane.Beacon1 == thisBeacon.Beacon;
                     yCoord = GetPoint(otherYPlane.Distance, previousDistances[thisBeacon.Beacon],
-                        previousDistances[beacon1IsThisBeacon ? otherYPlane.Beacon1 : otherYPlane.Beacon2]);
+                        previousDistances[beacon1IsThisBeacon ? otherYPlane.Beacon2 : otherYPlane.Beacon1]);
                 }
             }
             else
@@ -95,8 +95,8 @@ namespace QiMata.Indoor.Common
                 if (otherYPlane != null)
                 {
                     var beacon1IsThisBeacon = otherYPlane.Beacon1 == thisBeacon.Beacon;
-                    yCoord = GetPoint(otherYPlane.Distance,
-                        previousDistances[beacon1IsThisBeacon ? otherYPlane.Beacon1 : otherYPlane.Beacon2],
+                    yCoord = otherYPlane.Distance - GetPoint(otherYPlane.Distance,
+                        previousDistances[beacon1IsThisBeacon ? otherYPlane.Beacon2 : otherYPlane.Beacon1],
                         previousDistances[thisBeacon.Beacon]);
                 }
             }
@@ -109,8 +109,8 @@ namespace QiMata.Indoor.Common
             {
                 return new Coordinate
                 {
-                    X = Convert.ToDecimal(xCoord),
-                    Y = Convert.ToDecimal(yCoord)
+                    X = xCoord,
+                    Y = yCoord
                 };
             }
         }

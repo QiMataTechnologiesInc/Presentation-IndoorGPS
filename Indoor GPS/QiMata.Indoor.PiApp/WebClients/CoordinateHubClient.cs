@@ -18,7 +18,7 @@ namespace QiMata.Indoor.PiApp.WebClients
         {
             _hubConnection = new HubConnection("http://indoorgps.azurewebsites.net");
             _hubProxy = _hubConnection.CreateHubProxy("CoordinateHub");
-            _hubProxy.On<Coordinate>("NewCoordinate",callback);
+            _hubProxy.On<Coordinate>("SendNewCoordinate", callback);
             _hubConnection.Start().Wait();
         }
 

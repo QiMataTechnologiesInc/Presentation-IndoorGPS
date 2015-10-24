@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -8,6 +9,8 @@ using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -91,10 +94,24 @@ namespace QiMata.Indoor.PiApp
             Canvas.SetTop(CenterEllipse,endY / 2);
             this.Graph.Children.Add(CenterEllipse);
 
-            _coordinateHubClient = new CoordinateHubClient(x =>
+            _coordinateHubClient = new CoordinateHubClient(async x =>
             {
-                Canvas.SetLeft(CenterEllipse, (Convert.ToDouble(x.Y) * endY));
-                Canvas.SetTop(CenterEllipse, (Convert.ToDouble(x.X) * endX));
+                Debug.WriteLine($"X: {x.X} , Y: {x.Y}");
+
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    var yCoord = x.Y*endY/12;
+                    var xCoord = x.X*endX/(12 * 2);
+
+                    xCoord = xCoord > endX ? endX - 10 : xCoord;
+                    yCoord = yCoord > endY ? endY - 10 : yCoord;
+
+                    xCoord = xCoord < startX ? startX + 10 : xCoord;
+                    yCoord = yCoord < startY ? startY + 10 : yCoord;
+
+                    Canvas.SetLeft(CenterEllipse, xCoord);
+                    Canvas.SetTop(CenterEllipse, yCoord);
+                });
             });
         }
 

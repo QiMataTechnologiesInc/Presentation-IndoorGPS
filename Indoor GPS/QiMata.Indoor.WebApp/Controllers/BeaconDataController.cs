@@ -12,8 +12,8 @@ namespace QiMata.Indoor.WebApp.Controllers
 {
     public class BeaconDataController : ApiController
     {
-        private TriangulationRequired _triangulationRequired;
-        private readonly Dictionary<Beacon, double> _lastKnownPositions = new Dictionary<Beacon, double>();
+        private static TriangulationRequired _triangulationRequired;
+        private static readonly Dictionary<Beacon, double> _lastKnownPositions = new Dictionary<Beacon, double>();
 
         public IHttpActionResult PostNewBeaconData(IEnumerable<BeaconDistance> beaconData)
         {

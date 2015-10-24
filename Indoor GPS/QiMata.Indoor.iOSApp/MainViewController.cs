@@ -36,15 +36,52 @@ namespace QiMata.Indoor.iOSApp
             locationManager.DidRangeBeacons += HandleDidRangeBeacons;
             _beaconDistances = new ConcurrentQueue<BeaconDistance>();
 
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://indoorgps.azurewebsites.net/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var response = client.PutAsJsonAsync("api/BeaconData", new TriangulationRequired
+                {
+                    InitialDistances = new List<InitialDistance>
+                    {
+                        new InitialDistance
+                        {
+                            Beacon1 = Defaults.Beacons[0],
+                            Beacon2 = Defaults.Beacons[1],
+                            Distance = 12
+                        },
+                        new InitialDistance
+                        {
+                            Beacon1 = Defaults.Beacons[2],
+                            Beacon2 = Defaults.Beacons[1],
+                            Distance = 12
+                        },
+                        new InitialDistance
+                        {
+                            Beacon1 = Defaults.Beacons[0],
+                            Beacon2 = Defaults.Beacons[2],
+                            Distance = 12
+                        },
+                        //new InitialDistance
+                        //{
+
+                        //}
+                    }
+                }).Result;
+            }
+
         }
 
         private void HandleDidRangeBeacons(object sender, CLRegionBeaconsRangedEventArgs e)
         {
             foreach (CLBeacon beacon in e.Beacons)
             {
+                var txPow = beacon.Minor.ByteValue == 0 ? -55d : -56d;
                 _beaconDistances.Enqueue(new BeaconDistance
                 {
-                    Distance = Convert.ToDouble(Math.Pow(10d, (-55 - beacon.Rssi)/20)),
+                    Distance = Math.Pow(10d, (txPow - beacon.Rssi)/20),
                     Beacon = Defaults.Beacons.Single(x => Guid.Parse(GetGuid(beacon)) == x.Uuid && beacon.Major.Int32Value == x.Major && beacon.Minor.Int32Value == x.Minor)
                 });
                 Console.WriteLine(
@@ -74,8 +111,17 @@ namespace QiMata.Indoor.iOSApp
                 client.BaseAddress = new Uri("http://indoorgps.azurewebsites.net/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                
-                var response = await client.PostAsJsonAsync("api/BeaconData", _beaconDistances.AsEnumerable());
+
+                List<BeaconDistance> distances = new List<BeaconDistance>();
+
+                BeaconDistance distanceReading;
+
+                while (_beaconDistances.TryDequeue(out distanceReading))
+                {
+                    distances.Add(distanceReading);
+                }
+
+                var response = await client.PostAsJsonAsync("api/BeaconData", distances);
             }
         }
 
@@ -93,47 +139,11 @@ namespace QiMata.Indoor.iOSApp
             
             // Populate the regions we will range once.
             rangedRegions = new List<CLBeaconRegion>();
-            
+
             foreach (NSUuid uuid in Defaults.SupportedProximityUuids)
             {
                 CLBeaconRegion region = new CLBeaconRegion(uuid, uuid.AsString());
                 rangedRegions.Add(region);
-            }
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("http://indoorgps.azurewebsites.net/");
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var response = client.PutAsJsonAsync("api/BeaconData", new TriangulationRequired
-                {
-                    InitialDistances = new List<InitialDistance>
-                    {
-                        new InitialDistance
-                        {
-                            Beacon1 = Defaults.Beacons[0],
-                            Beacon2 = Defaults.Beacons[1],
-                            Distance = 8
-                        },
-                        new InitialDistance
-                        {
-                            Beacon1 = Defaults.Beacons[2],
-                            Beacon2 = Defaults.Beacons[1],
-                            Distance = 8
-                        },
-                        new InitialDistance
-                        {
-                            Beacon1 = Defaults.Beacons[0],
-                            Beacon2 = Defaults.Beacons[2],
-                            Distance = 8
-                        },
-                        //new InitialDistance
-                        //{
-
-                        //}
-                    }
-                });
             }
         }
 
